@@ -6,117 +6,97 @@
 /*   By: slazar <slazar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 21:05:52 by slazar            #+#    #+#             */
-/*   Updated: 2024/10/28 02:31:44 by slazar           ###   ########.fr       */
+/*   Updated: 2024/11/12 02:55:29 by slazar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
 
-ScalarConverter::ScalarConverter(std::string const &input) : _input(input)
+ScalarConverter::ScalarConverter()
 {
-}
-
-ScalarConverter::ScalarConverter(ScalarConverter const &src)
-{
-	*this = src;
 }
 
 ScalarConverter::~ScalarConverter()
 {
 }
 
-ScalarConverter &ScalarConverter::operator=(ScalarConverter const &rhs)
+ScalarConverter::ScalarConverter(const ScalarConverter &ref)
 {
-	if (this != &rhs)
-	{
-		_input = rhs._input;
-	}
-	return *this;
+	*this = ref;
 }
 
-void ScalarConverter::convert()
+ScalarConverter& ScalarConverter::operator=(const ScalarConverter &ref)
 {
-	displayChar();
-	displayInt();
-	displayFloat();
-	displayDouble();
+	(void)ref;
+	return (*this);
 }
-
-void ScalarConverter::displayChar()
+ 
+const char* ScalarConverter::ImpossibleException::what() const throw()
 {
-	std::cout << "char: ";
+	return ("impossible");
+}
+void	ScalarConverter::Convert(std::string input)
+{
+	std::string::size_type sz;
+	double d;
+	float f;
+	int i;
+	char c;
 	try
 	{
-		int i = std::stoi(_input);
-		if (i < 0 || i > 127)
-			throw std::exception();
-		if (std::isprint(i))
-			std::cout << "'" << static_cast<char>(i) << "'" << std::endl;
+		if (input.length() == 1 && !std::isdigit(input[0]))
+		{
+			c = input[0];
+			std::cout << "char: "<< "'" << c << "'" << std::endl;
+			std::cout << "int: " << static_cast<int>(c) << std::endl;
+			std::cout << "float: " << std::fixed << std::setprecision(1) << static_cast<float>(c) << "f" << std::endl;
+			std::cout << "double: " << std::fixed << std::setprecision(1) << static_cast<double>(c) << std::endl;
+			return ;
+		}
+		d = std::stod(input, &sz);
+		if (d < std::numeric_limits<char>::min() || d > std::numeric_limits<char>::max() || std::isnan(d) || std::isinf(d))
+			throw ImpossibleException();
+		c = static_cast<char>(d);
+		if (std::isprint(c))
+			std::cout << "char: "<< "'" << c << "'" << std::endl;
 		else
-			std::cout << "Non displayable" << std::endl;
+				std::cout << "char: Non displayable" << std::endl;
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "impossible" << std::endl;
+		std::cout << "char: " << e.what() << std::endl;
 	}
-}
-
-void ScalarConverter::displayInt()
-{
-	std::cout << "int: ";
 	try
 	{
-		int i = std::stoi(_input);
-		std::cout << i << std::endl;
+		i = static_cast<int>(std::stoi(input, &sz));
+		if (i < std::numeric_limits<int>::min() || i > std::numeric_limits<int>::max() || std::isnan(i) || std::isinf(i))
+			throw ImpossibleException();
+		std::cout << "int: " << i << std::endl;
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
 	}
-}
-
-void ScalarConverter::displayFloat()
-{
-	std::cout << "float: ";
 	try
 	{
-		float f = std::stof(_input);
-		if (f == std::numeric_limits<float>::infinity() || f == -std::numeric_limits<float>::infinity())
-			std::cout << f << "f" << std::endl;
-		else
-			std::cout << std::fixed << std::setprecision(1) << f << "f" << std::endl;
+		f = std::stof(input, &sz);
+		if (f < std::numeric_limits<float>::min() || f > std::numeric_limits<float>::max() || std::isnan(f) || std::isinf(f))
+			throw ImpossibleException();
+		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "impossible" << std::endl;
+		std::cout << "float: impossible" << std::endl;
 	}
-}
-
-void ScalarConverter::displayDouble()
-{
-	std::cout << "double: ";
 	try
 	{
-		double d = std::stod(_input);
-		if (d == std::numeric_limits<double>::infinity() || d == -std::numeric_limits<double>::infinity())
-			std::cout << d << std::endl;
-		else
-			std::cout << std::fixed << std::setprecision(1) << d << std::endl;
+		d = std::stod(input, &sz);
+		if (d < std::numeric_limits<double>::min() || d > std::numeric_limits<double>::max() || std::isnan(d) || std::isinf(d))
+			throw ImpossibleException();
+		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "impossible" << std::endl;
+		std::cout << "double: impossible" << std::endl;
 	}
-}
-
-int main(int ac, char **av)
-{
-	if (ac != 2)
-	{
-		std::cout << "Usage: ./scalar_converter <value>" << std::endl;
-		return 1;
-	}
-	ScalarConverter sc(av[1]);
-	sc.convert();
-	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: slazar <slazar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 21:06:05 by slazar            #+#    #+#             */
-/*   Updated: 2024/10/27 21:06:35 by slazar           ###   ########.fr       */
+/*   Updated: 2024/11/11 07:45:23 by slazar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,17 @@
 
 class ScalarConverter
 {
-public:
-	ScalarConverter(std::string const &input);
-	ScalarConverter(ScalarConverter const &src);
-	~ScalarConverter();
+    private:
+        ScalarConverter();
+    public:
+        ~ScalarConverter();
+        ScalarConverter(const ScalarConverter &ref);
+        ScalarConverter& operator=(const ScalarConverter &ref);
+        static  void    Convert(std::string input);
 
-	ScalarConverter &operator=(ScalarConverter const &rhs);
-
-	void convert();
-	void displayChar();
-	void displayInt();
-	void displayFloat();
-	void displayDouble();
-	
+	class ImpossibleException : public std::exception
+	{
+		public:
+			virtual const char* what() const throw();
+	};
+};
